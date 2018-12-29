@@ -1,0 +1,1 @@
+this file can be used to train some cnn models with some pretrained model from imagenet dataset, eval the trained model and export the model into the pb file for tf_serving. the batch size for train and validation is adaptive
