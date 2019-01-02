@@ -9,7 +9,7 @@ from tensorflow.python.platform import gfile
 import numpy 
 from preprocessing import preprocessing_factory
 
-tf.app.flags.DEFINE_string('checkpoint_dir', '/weixue/my_bench/imagenet/resnet_v1_50.ckpt', '')
+tf.app.flags.DEFINE_string('checkpoint_dir', '/imagenet/resnet_v1_50.ckpt', '')
 tf.app.flags.DEFINE_string('model_name', 'vgg_16', '')
 tf.app.flags.DEFINE_string('export_path_base', '', '')
 

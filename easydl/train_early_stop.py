@@ -10,10 +10,10 @@ from tensorflow.python.platform import gfile
 import Configure_file
 
 tf.app.flags.DEFINE_string('pre_trained_model_ckpt_path', '', '')
-tf.app.flags.DEFINE_string('checkpoint_dir', '/weixue/my_bench/imagenet/checkpoint/', '')
-tf.app.flags.DEFINE_string('summary_dir', '/weixue/my_bench/imagenet/checkpoint/', '')
-tf.app.flags.DEFINE_string('train_data_dir', '/weixue/imagenet-tf/', '')
-tf.app.flags.DEFINE_string('validation_data_dir', '/weixue/imagenet-tf/', '')
+tf.app.flags.DEFINE_string('checkpoint_dir', '/imagenet/checkpoint/', '')
+tf.app.flags.DEFINE_string('summary_dir', '/imagenet/checkpoint/', '')
+tf.app.flags.DEFINE_string('train_data_dir', '/imagenet-tf/', '')
+tf.app.flags.DEFINE_string('validation_data_dir', 'imagenet-tf/', '')
 #tf.app.flags.DEFINE_string('export_path_base', '', 'export file')
 
 tf.app.flags.DEFINE_integer('batch_size', 16, '')

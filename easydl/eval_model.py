@@ -8,8 +8,8 @@ from tensorflow.python.framework import function
 from tensorflow.python.platform import gfile
 import numpy 
 
-tf.app.flags.DEFINE_string('checkpoint_dir', '/weixue/my_bench/imagenet/resnet_v1_50.ckpt', '')
-tf.app.flags.DEFINE_string('data_dir', '/weixue/imagenet-tf/', '')
+tf.app.flags.DEFINE_string('checkpoint_dir', '/imagenet/resnet_v1_50.ckpt', '')
+tf.app.flags.DEFINE_string('data_dir', '/imagenet-tf/', '')
 tf.app.flags.DEFINE_string('output_dir', '', '')
 
 tf.app.flags.DEFINE_string('model_name', 'vgg_16', '')
