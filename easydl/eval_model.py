@@ -8,13 +8,13 @@ from tensorflow.python.framework import function
 from tensorflow.python.platform import gfile
 import numpy 
 
-tf.app.flags.DEFINE_string('checkpoint_dir', '/imagenet/resnet_v1_50.ckpt', '')
-tf.app.flags.DEFINE_string('data_dir', '/imagenet-tf/', '')
+tf.app.flags.DEFINE_string('checkpoint_dir', '/weixue/my_bench/imagenet/resnet_v1_50.ckpt', '')
+tf.app.flags.DEFINE_string('data_dir', '/weixue/imagenet-tf/', '')
 tf.app.flags.DEFINE_string('output_dir', '', '')
 
-tf.app.flags.DEFINE_string('model_name', 'vgg_16', '')
+tf.app.flags.DEFINE_string('model_name', 'inception_v4', '')
 tf.app.flags.DEFINE_integer('num_class', 10, 'the number of training sample categories')
-tf.app.flags.DEFINE_integer('batch_size', 32 , '')
+tf.app.flags.DEFINE_integer('batch_size', 8 , '')
    
 FLAGS = tf.app.flags.FLAGS
 
@@ -89,6 +89,7 @@ def main(argv=None):
   validation_init_op = iterator.make_initializer(validation_dataset)
   images, labels, filenames = iterator.get_next()
   images = tf.reshape(images, shape=[batch_size, height, width, 3])
+  #images = tf.Print(images,[tf.convert_to_tensor('jianjunzhi,hou'),images],first_n=1,summarize=100)
   labels = tf.reshape(labels, [batch_size])
   
   from nets import nets_factory
@@ -116,19 +117,22 @@ def main(argv=None):
   ckpt = tf.train.latest_checkpoint(FLAGS.checkpoint_dir)
 
   if ckpt:
-        saver.restore(sess, ckpt)
-        print("restore from the checkpoint {0}".format(ckpt))
+    saver.restore(sess, ckpt)
+    print("restore from the checkpoint {0}".format(ckpt))
   
   print('validation strarts')
   
   log, lab, f = [],[],[]
-
+  import time
+  t0 = time.time()
   for i in range(eval_steps):
     _, logit, label_batch,fis = sess.run([eval_op, pred_soft,labels,filenames])
     log.extend(logit.tolist())
     lab.extend(label_batch)
     f.extend(fis)
-
+    
+  print('time : %f' %(time.time()-t0))
+  
   log = log[:num_examples]
   lab = lab[:num_examples]
   f = f[:num_examples]
@@ -137,7 +141,7 @@ def main(argv=None):
   result['files'] = f
   result['labels'] = str(lab)
   result['logits'] = log
-
+  
   result_path = FLAGS.output_dir + 'result.json'
   import json
   jsObj = json.dumps(result)
@@ -146,6 +150,13 @@ def main(argv=None):
   fileObject.close()
   
   print('finished')
+  
+  dic_result = {}
+  for i in range(len(f)):
+    print(f[i] + '\t\t' + str(log[i]) + '\t\t' + str(lab[i]))
+    #dic_result[f[i]] = [log[i],lab[i]]
+  #print(dic_result)
+  
 
 if __name__ == '__main__':
   tf.app.run()

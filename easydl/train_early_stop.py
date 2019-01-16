@@ -10,25 +10,25 @@ from tensorflow.python.platform import gfile
 import Configure_file
 
 tf.app.flags.DEFINE_string('pre_trained_model_ckpt_path', '', '')
-tf.app.flags.DEFINE_string('checkpoint_dir', '/imagenet/checkpoint/', '')
-tf.app.flags.DEFINE_string('summary_dir', '/imagenet/checkpoint/', '')
-tf.app.flags.DEFINE_string('train_data_dir', '/imagenet-tf/', '')
-tf.app.flags.DEFINE_string('validation_data_dir', 'imagenet-tf/', '')
+tf.app.flags.DEFINE_string('checkpoint_dir', '/weixue/my_bench/imagenet/checkpoint/', '')
+tf.app.flags.DEFINE_string('summary_dir', '/weixue/my_bench/imagenet/checkpoint/', '')
+tf.app.flags.DEFINE_string('train_data_dir', '/weixue/imagenet-tf/', '')
+tf.app.flags.DEFINE_string('validation_data_dir', '/weixue/imagenet-tf/', '')
 #tf.app.flags.DEFINE_string('export_path_base', '', 'export file')
 
-tf.app.flags.DEFINE_integer('batch_size', 16, '')
+tf.app.flags.DEFINE_integer('batch_size', 32, '')
 #tf.app.flags.DEFINE_integer('input_height', 224, '')
 #tf.app.flags.DEFINE_integer('input_width', 224, '')
 
 #tf.app.flags.DEFINE_integer('num_examples', 7000, 'the number of training samples')
 
 tf.app.flags.DEFINE_integer('num_class', 37, 'the number of training sample categories')
-tf.app.flags.DEFINE_float('epochs', 1000 , '')
+tf.app.flags.DEFINE_float('epochs', 10 , '')
 tf.app.flags.DEFINE_integer('warmup_epochs', 0, '')
 
-tf.app.flags.DEFINE_float('init_learning_rate', 0.0001, '')
+tf.app.flags.DEFINE_float('init_learning_rate', 0.00001, '')
 tf.app.flags.DEFINE_float('decay_rate', 0.9, '')
-tf.app.flags.DEFINE_float('decay_steps', 100, '')
+tf.app.flags.DEFINE_float('decay_steps', 500, '')
 tf.app.flags.DEFINE_float('warm_lr', 0.1, '')
 
 tf.app.flags.DEFINE_string('lr_decay', 'exponential_decay', 'exponential_decay, natural_exp_decay,polynomial_decay')
@@ -36,7 +36,7 @@ tf.app.flags.DEFINE_string('optimizer', 'rmsp', 'rmsp,adam,sgd,mometum,lars')
 tf.app.flags.DEFINE_string('model_name', 'vgg_16','')
 
 tf.app.flags.DEFINE_integer('display_every_steps', 10, '')
-tf.app.flags.DEFINE_integer('eval_every_steps', 1000, '')
+tf.app.flags.DEFINE_integer('eval_every_steps', 100, '')
 tf.app.flags.DEFINE_integer('fine_tune', 1, 'whether the model is trained from a pre-trained model')
 tf.app.flags.DEFINE_integer('early_stop', 1, 'whether to stop training model early')
 
@@ -178,7 +178,7 @@ def main(argv=None):
 
     images, labels, filenames = iterator.get_next()
     
-#    images = tf.Print(images,[filenames])
+    #images = tf.Print(images,[filenames])
     images = tf.reshape(images, shape=[-1, height, width, 3])
     labels = tf.reshape(labels, [-1])
 
@@ -292,7 +292,7 @@ def main(argv=None):
     else:
         scaffold = None
       
-    print('start training')
+    #print('start training')
     early_stop_param = {}
     early_stop_param['count'] = 0
     early_stop_param['last'] = 100000
@@ -300,15 +300,17 @@ def main(argv=None):
     with tf.train.MonitoredTrainingSession(checkpoint_dir=None,
                                            config=config,
                                            scaffold=scaffold,
-                                           hooks=hooks
+                                           hooks=hooks,
+                                           stop_grace_period_secs=1200
                                            ) as mon_sess:
       if FLAGS.early_stop == 1:
-        print('early stop')
+        print('start traing with early stop')
         mon_sess._coordinated_creator.tf_sess.run(train_init_op)
         
         import early_stop
         global_step = 0
         while global_step < train_steps:
+         
           if (global_step) % eval_every_steps == 0 and global_step > 0:
             print('start validating')
             mon_sess._coordinated_creator.tf_sess.run(validation_init_op)
@@ -325,15 +327,16 @@ def main(argv=None):
             global_step = global_step + 1
             early_stop_param = early_stop.early_stop(validation_loss,early_stop_param)
             if early_stop_param['count'] >= 3:
-              print('process should stop')
+              print('train process should stop')
               break
           if (global_step+1) % display_every_steps == 0 and global_step > 0:
             global_step, _, batch_loss, top1, top5 = mon_sess.run([global_steps, train_op, loss, top_1, top_5])
             print('global_step: %d, train_loss: %f, top1: %f, top5: %f' % (global_step, batch_loss, top1, top5))
           else: 
             global_step, _ = mon_sess.run([global_steps, train_op])
+
       else:
-        print('no early stop')
+        print('start training without early stop')
         mon_sess._coordinated_creator.tf_sess.run(train_init_op)
         global_step = 0
         while global_step < train_steps:

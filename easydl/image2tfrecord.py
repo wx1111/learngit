@@ -34,8 +34,9 @@ def find_image_files(data_dir):
         filename_one_label = []
         try:
           for j in list(['*.png','*.jpg', '*.jpeg','*.PNG','*.JPG', '*.JPEG']):#'*.bmp',
-            #print(j)
+
             filename_one_label.extend(tf.gfile.Glob(data_dir + i + '/' + j))
+            print('there is %d images with %s in %s' % (len(tf.gfile.Glob(data_dir + i + '/' + j)),j,i))
             #print(tf.gfile.Glob(data_dir + i + '/' + j))
         except BaseException as e:
             print(e)
@@ -59,7 +60,7 @@ def find_image_files(data_dir):
 
 
 def process_image(filename):
-    image_data = tf.gfile.GFile(filename,'rb').read()
+    image_data = tf.gfile.GFile(filename,'r').read()
 
     #image_data = tf.read_file(filename)
 #    print(image_data)
@@ -69,6 +70,7 @@ def process_image(filename):
         with tf.Session(graph=g) as session:
             #            image = session.run(tf.image.decode_jpeg(image_data,channels=3))
             image = session.run(tf.image.decode_image(image_data, channels = 3))
+            #print(image)
             height = image.shape[0]
             width = image.shape[1]
             assert image.shape[2] == 3
@@ -154,7 +156,7 @@ def process_image_files(filenames, labels):
     # Break all images into batches with a [ranges[i][0], ranges[i][1]].
 
     spacing = np.linspace(0, len(filenames), num_thread + 1).astype(np.int)
-    print(spacing)
+    #print(spacing)
     ranges = []
 
     for i in range(len(spacing) - 1):

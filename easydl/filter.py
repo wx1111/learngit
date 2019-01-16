@@ -36,12 +36,13 @@ while os.listdir(result_input_dir)[0].rsplit('/')[-1] != 'output_dir':
 print(result_input_dir)
 '''
 
-os.popen('cp -r ' + pb_input_dir + '/./. ' + pb_output_dir)
-os.popen('cp -r ' + ck_input_dir + '/./. ' + ck_output_dir)
+os.popen('cp -r ' + pb_input_dir + 'image_class/. ' + pb_output_dir)
+os.popen('cp -r ' + ck_input_dir + '. ' + ck_output_dir)
 os.popen('rm ' + ck_output_dir + 'checkpoint')
 os.popen('rm ' + ck_output_dir + 'events.out.tfevents.*')
 os.popen('rm ' + ck_output_dir + 'graph.pbtxt')
 os.popen('cp -r ' + result_input_dir + '/. ' + data_output_dir)
+
 
 print(pb_input_dir)
 print(ck_input_dir)

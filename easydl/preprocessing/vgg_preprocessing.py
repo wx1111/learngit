@@ -330,10 +330,14 @@ def preprocess_for_eval(image, output_height, output_width, resize_side):
   Returns:
     A preprocessed image.
   """
+  #image = tf.Print(image,[tf.convert_to_tensor('yuanshitupian'),image],first_n=1,summarize=100)
   image = _aspect_preserving_resize(image, resize_side)
+  #image = tf.Print(image,[tf.convert_to_tensor('after resize'),image],first_n=1,summarize=100)
   image = _central_crop([image], output_height, output_width)[0]
+  #image = tf.Print(image,[tf.convert_to_tensor('after crop'),image],first_n=1,summarize=100)
   image.set_shape([output_height, output_width, 3])
   image = tf.to_float(image)
+  #image = tf.Print(image,[tf.convert_to_tensor('to float'),image],first_n=1,summarize=100)
   return _mean_image_subtraction(image, [_R_MEAN, _G_MEAN, _B_MEAN])
 
 

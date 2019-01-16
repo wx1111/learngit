@@ -72,12 +72,12 @@ def segmentation_change_all(source_dir, outfile_dir):
         for file in os.listdir(newpath):  # 遍历目标文件夹图片
             read_img_name = os.path.join(newpath, file.strip())  # 取图片完整路径
             img = io.imread(read_img_name)
-            print(read_img_name, img.shape)
+            #print(read_img_name, img.shape)
             if(img.shape[-1] == 4):
                 img = img[:,:,:3]
                 #segments = slic(img, n_segments=300, compactness=10)
             segments = slic(img, n_segments=300, compactness=10)
-            print(read_img_name,segments)
+            #print(read_img_name,segments)
             out = mark_boundaries(img, segments)
             out_img_name = os.path.join(output_path, "segmentation_" + file.strip())
             io.imsave(out_img_name,out)

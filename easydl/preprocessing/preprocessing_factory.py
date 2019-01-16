@@ -21,12 +21,11 @@ from __future__ import print_function
 import tensorflow as tf
 
 from preprocessing import cifarnet_preprocessing
-from preprocessing import inception_preprocessing
+from preprocessing import new_inception_preprocessing as inception_preprocessing # 
 from preprocessing import lenet_preprocessing
-from preprocessing import vgg_preprocessing
+from preprocessing import new_vgg_preprocessing as vgg_preprocessing #
 
 slim = tf.contrib.slim
-
 
 def get_preprocessing(name, is_training=True):
   """Returns preprocessing_fn(image, height, width, **kwargs).
